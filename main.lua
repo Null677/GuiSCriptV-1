@@ -1,5 +1,5 @@
 -- ==========================================
--- BENZERSİZ GUI KÜTÜPHANESİ (MOR & PEMBE)
+-- BENZERSİZ GUI KÜTÜPHANESİ (YAVAŞ ANİMASYONLU &ÖZEL - TUŞU)
 -- ==========================================
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
@@ -11,7 +11,7 @@ if CoreGui:FindFirstChild("OzelGuiLib") then
 end
 
 local OzelLib = {}
-local AktifOzellikler = {} -- Kapatılınca durdurulacak özellikler için
+local AktifOzellikler = {} 
 
 function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     local ScreenGui = Instance.new("ScreenGui")
@@ -21,7 +21,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     -- GİRİŞ ANİMASYONU İÇİN NOKTA
     local Nokta = Instance.new("Frame")
     Nokta.Size = UDim2.new(0, 15, 0, 15)
-    Nokta.Position = UDim2.new(0.5, -7, -0.1, 0) -- Ekranın üstü
+    Nokta.Position = UDim2.new(0.5, -7, -0.1, 0)
     Nokta.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Nokta.AnchorPoint = Vector2.new(0.5, 0.5)
     local NoktaCorner = Instance.new("UICorner")
@@ -31,7 +31,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     
     -- ANA PENCERE
     local AnaPencere = Instance.new("Frame")
-    AnaPencere.Size = UDim2.new(0, 0, 0, 0) -- Animasyon için başlangıç boyutu 0
+    AnaPencere.Size = UDim2.new(0, 0, 0, 0)
     AnaPencere.Position = UDim2.new(0.5, 0, 0.5, 0)
     AnaPencere.AnchorPoint = Vector2.new(0.5, 0.5)
     AnaPencere.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -96,6 +96,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     KucultButon.TextColor3 = Color3.fromRGB(255, 255, 255)
     KucultButon.TextSize = 24
     KucultButon.Font = Enum.Font.GothamBold
+    KucultButon.ZIndex = 5
     KucultButon.Parent = AnaPencere
 
     local KapatButon = Instance.new("TextButton")
@@ -106,6 +107,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     KapatButon.TextColor3 = Color3.fromRGB(255, 50, 50)
     KapatButon.TextSize = 18
     KapatButon.Font = Enum.Font.GothamBold
+    KapatButon.ZIndex = 5
     KapatButon.Parent = AnaPencere
 
     -- SOL KATEGORİ (SEKME) ALANI
@@ -120,7 +122,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     KategoriLayout.Parent = KategoriAlani
     KategoriLayout.Padding = UDim.new(0, 5)
 
-    -- SAĞ İÇERİK ALANI (ÖZELLİKLER BURAYA GELECEK)
+    -- SAĞ İÇERİK ALANI
     local IcerikAlani = Instance.new("Frame")
     IcerikAlani.Size = UDim2.new(1, -160, 1, -80)
     IcerikAlani.Position = UDim2.new(0, 150, 0, 45)
@@ -131,7 +133,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     IcerikCorner.CornerRadius = UDim.new(0, 8)
     IcerikCorner.Parent = IcerikAlani
 
-    -- ONAY MENÜSÜ (Kapatmaya basınca çıkacak olan)
+    -- ONAY MENÜSÜ
     local OnayMenusu = Instance.new("Frame")
     OnayMenusu.Size = UDim2.new(1, 0, 1, 0)
     OnayMenusu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -154,7 +156,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     local OnayKapat = Instance.new("TextButton")
     OnayKapat.Size = UDim2.new(0, 100, 0, 35)
     OnayKapat.Position = UDim2.new(0.5, -110, 0.6, 0)
-    OnayKapat.BackgroundColor3 = Color3.fromRGB(200, 40, 40) -- Kırmızı
+    OnayKapat.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
     OnayKapat.Text = "Kapat"
     OnayKapat.TextColor3 = Color3.fromRGB(255,255,255)
     OnayKapat.Font = Enum.Font.GothamBold
@@ -165,7 +167,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     local OnayGeri = Instance.new("TextButton")
     OnayGeri.Size = UDim2.new(0, 100, 0, 35)
     OnayGeri.Position = UDim2.new(0.5, 10, 0.6, 0)
-    OnayGeri.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Gri
+    OnayGeri.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     OnayGeri.Text = "Geri"
     OnayGeri.TextColor3 = Color3.fromRGB(255,255,255)
     OnayGeri.Font = Enum.Font.GothamBold
@@ -175,13 +177,30 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
 
     -- MANTIK VE ANİMASYONLAR
     local AcikMi = true
+    local AnimasyondaMi = false
+
+    -- YUKARI DOĞRU KATLANAN VE AÇILAN - BUTONU ANİMASYONU
     KucultButon.MouseButton1Click:Connect(function()
+        if AnimasyondaMi then return end
+        AnimasyondaMi = true
         AcikMi = not AcikMi
-        if AcikMi then
-            TweenService:Create(AnaPencere, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 350)}):Play()
+
+        if not AcikMi then
+            -- Aşağıdan yukarıya doğru büzülerek kapanma
+            local Kapanis = TweenService:Create(AnaPencere, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 500, 0, 35)
+            })
+            Kapanis:Play()
+            Kapanis.Completed:Wait()
         else
-            TweenService:Create(AnaPencere, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 40)}):Play()
+            -- Aşağıya doğru esneyerek geri açılma
+            local Acilis = TweenService:Create(AnaPencere, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 500, 0, 350)
+            })
+            Acilis:Play()
+            Acilis.Completed:Wait()
         end
+        AnimasyondaMi = false
     end)
 
     KapatButon.MouseButton1Click:Connect(function()
@@ -193,25 +212,35 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     end)
 
     OnayKapat.MouseButton1Click:Connect(function()
-        -- Tüm aktif özellikleri iptal etme mantığı eklenebilir
         for _, fonksiyon in pairs(AktifOzellikler) do
-            pcall(fonksiyon) -- Kapatma fonksiyonlarını çalıştırır
+            pcall(fonksiyon)
         end
         ScreenGui:Destroy()
     end)
 
-    -- AÇILIŞ ANİMASYONU KODLARI (Nokta düşer, patlar, GUI açılır)
-    local DusmeAnim = TweenService:Create(Nokta, TweenInfo.new(0.8, Enum.EasingStyle.Bounce), {Position = UDim2.new(0.5, 0, 0.5, 0)})
+    -- DAHA YAVAŞ VE AKICI DÜŞÜŞ / AÇILIŞ ANİMASYONU
+    -- Noktanın düşüş süresi 0.8s -> 1.5s yapıldı
+    local DusmeAnim = TweenService:Create(Nokta, TweenInfo.new(1.5, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    })
     DusmeAnim:Play()
     DusmeAnim.Completed:Wait()
 
-    local PatlamaAnim = TweenService:Create(Nokta, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 60, 0, 60), BackgroundTransparency = 1})
+    -- Noktanın patlama süresi 0.3s -> 0.6s yapıldı
+    local PatlamaAnim = TweenService:Create(Nokta, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 90, 0, 90), 
+        BackgroundTransparency = 1
+    })
     PatlamaAnim:Play()
     PatlamaAnim.Completed:Wait()
     Nokta:Destroy()
 
+    -- Ana GUI'nin büyüme süresi 0.6s -> 1.2s yapıldı (Daha yavaş ve pürüzsüz)
     AnaPencere.Visible = true
-    TweenService:Create(AnaPencere, TweenInfo.new(0.6, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {Size = UDim2.new(0, 500, 0, 350)}):Play()
+    local AnaAcilis = TweenService:Create(AnaPencere, TweenInfo.new(1.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 500, 0, 350)
+    })
+    AnaAcilis:Play()
 
     -- GUI SÜRÜKLEME KODU
     local surukleniyor, baslangicGiris, baslangicPozisyon
@@ -234,11 +263,10 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
         end
     end)
 
-    -- TAB KONTROLÜ İÇİN DEĞİŞKENLER
+    -- TAB KONTROLÜ
     local IlkTabSecildi = false
     local Pencereler = {}
 
-    -- KATEGORİ (SEKME) EKLEME FONKSİYONU
     local KategoriSistemi = {}
     function KategoriSistemi:KategoriEkle(isim)
         local TabButon = Instance.new("TextButton")
@@ -279,7 +307,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
             TabButon.BackgroundTransparency = 0.5
         end)
 
-        -- ÖZELLİK (BUTON) EKLEME FONKSİYONU
         local TabOzellikleri = {}
         function TabOzellikleri:ButonEkle(butonIsmi, callback)
             local Btn = Instance.new("TextButton")
@@ -308,17 +335,14 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
 end
 
 -- ==========================================
--- KÜTÜPHANEYİ KULLANMA KISMI (SADECE BURAYI DÜZENLEYECEKSİN)
+-- KULLANIM ÖRNEĞİ
 -- ==========================================
 
--- 1. Arayüzü Başlat
-local Pencerem = OzelLib:Olustur("Senin Adın", "Blox Fruits (veya başka oyun)", "v1.0")
+local Pencerem = OzelLib:Olustur("Senin Adın", "Blox Fruits", "v1.0")
 
--- 2. Kategorileri (Sekmeleri) Oluştur
 local OyuncuSekmesi = Pencerem:KategoriEkle("Oyuncu")
 local IsinlanmaSekmesi = Pencerem:KategoriEkle("Işınlanma")
 
--- 3. Kategorilerin İçine Butonları (Özellikleri) Ekle
 OyuncuSekmesi:ButonEkle("Hızlı Koşma (WalkSpeed)", function()
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
 end)
