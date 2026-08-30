@@ -1,3 +1,19 @@
+--[[
+Selam! Kendi GUI kütüphanemi kullanarak yeni bir script yazacağız.
+
+Script Bilgileri:
+* Oyunun Adı: [Oyunun Adını Buraya Yaz]
+* Yapımcı: NullLegend
+* Sürüm: [Örn: v1.0]
+
+Kategoriler ve İstediğim Özellikler:
+1. [Kategori Adı] sekmesi: [Özellik Adı] (Toggle)
+2. [Kategori Adı] sekmesi: [Özellik Adı] (Normal Buton)
+(İstediğin kadar ekleyebilirsin...)
+
+⚠️ ÖNEMLİ KURAL: Aşağıdaki "OzelLib" ana GUI kodumda KESİNLİKLE HİÇBİR DEĞİŞİKLİK YAPMA ve ana kodu bana tekrar yazdırma. Sadece kodun en altına eklemem gereken OzelLib:Olustur, KategoriEkle, ButonEkle ve ToggleEkle kodlarını ver. Hilelerin çalışma mantığını da bu butonların içine yaz.
+]]--
+
 -- ==========================================
 -- BENZERSİZ GUI KÜTÜPHANESİ (TOGGLE, YENİ FONTLAR VE GÖLGELER)
 -- ==========================================
@@ -48,14 +64,13 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     TemaGradient.Rotation = 45
     TemaGradient.Parent = AnaPencere
 
-    -- BİLGİ YAZILARI (Yeni Font ve Gölge Ayarlarıyla)
     local YapimciText = Instance.new("TextLabel")
     YapimciText.Size = UDim2.new(0, 200, 0, 20)
     YapimciText.Position = UDim2.new(0, 10, 0, 5)
     YapimciText.BackgroundTransparency = 1
     YapimciText.Text = "Yapımcı: " .. Yapimci
-    YapimciText.TextColor3 = Color3.fromRGB(50, 10, 80) -- Dark Mor
-    YapimciText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255) -- Beyaz Gölge
+    YapimciText.TextColor3 = Color3.fromRGB(50, 10, 80) 
+    YapimciText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255) 
     YapimciText.TextStrokeTransparency = 0
     YapimciText.TextXAlignment = Enum.TextXAlignment.Left
     YapimciText.Font = Enum.Font.GothamBlack
@@ -172,7 +187,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     Instance.new("UICorner", OnayGeri).CornerRadius = UDim.new(0, 6)
     OnayGeri.Parent = OnayMenusu
 
-    -- KÜÇÜLTME MANTIĞI
     local AcikMi = true
     local AnimasyondaMi = false
 
@@ -220,7 +234,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
         ScreenGui:Destroy()
     end)
 
-    -- AÇILIŞ ANİMASYONLARI
     local DusmeAnim = TweenService:Create(Nokta, TweenInfo.new(1.5, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
         Position = UDim2.new(0.5, 0, 0.5, 0)
     })
@@ -241,7 +254,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     })
     AnaAcilis:Play()
 
-    -- SÜRÜKLEME 
     local surukleniyor, baslangicGiris, baslangicPozisyon
     AnaPencere.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -273,8 +285,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
         TabButon.BackgroundTransparency = 0.8
         TabButon.Text = isim
         
-        -- TAB YAZI STİLLERİ
-        TabButon.TextColor3 = Color3.fromRGB(50, 10, 80) -- Dark Mor
+        TabButon.TextColor3 = Color3.fromRGB(50, 10, 80)
         TabButon.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
         TabButon.TextStrokeTransparency = 0
         TabButon.Font = Enum.Font.GothamBlack
@@ -313,7 +324,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
 
         local TabOzellikleri = {}
         
-        -- NORMAL TIKLANABİLİR BUTON (YENİLENMİŞ)
         function TabOzellikleri:ButonEkle(butonIsmi, callback)
             local Btn = Instance.new("TextButton")
             Btn.Size = UDim2.new(1, -5, 0, 40)
@@ -321,7 +331,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
             Btn.BackgroundTransparency = 0.8
             Btn.Text = "  " .. butonIsmi
             
-            -- NORMAL BUTON YAZI STİLLERİ
             Btn.TextColor3 = Color3.fromRGB(50, 10, 80)
             Btn.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
             Btn.TextStrokeTransparency = 0
@@ -340,7 +349,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
             end)
         end
 
-        -- YENİ EKLENEN TOGGLE (AÇ/KAPAT) SİSTEMİ
         function TabOzellikleri:ToggleEkle(toggleIsmi, callback)
             local TglBtn = Instance.new("TextButton")
             TglBtn.Size = UDim2.new(1, -5, 0, 40)
@@ -348,7 +356,6 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
             TglBtn.BackgroundTransparency = 0.8
             TglBtn.Text = "  " .. toggleIsmi
             
-            -- TOGGLE YAZI STİLLERİ
             TglBtn.TextColor3 = Color3.fromRGB(50, 10, 80)
             TglBtn.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
             TglBtn.TextStrokeTransparency = 0
@@ -359,15 +366,13 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
             TglBtn.Parent = TabSayfasi
             Instance.new("UICorner", TglBtn).CornerRadius = UDim.new(0, 4)
 
-            -- Toggle Dış Kutu (Arka plan)
             local ToggleBg = Instance.new("Frame")
             ToggleBg.Size = UDim2.new(0, 44, 0, 22)
             ToggleBg.Position = UDim2.new(1, -50, 0.5, -11)
-            ToggleBg.BackgroundColor3 = Color3.fromRGB(120, 120, 120) -- Gri (Kapalı State)
+            ToggleBg.BackgroundColor3 = Color3.fromRGB(120, 120, 120) 
             ToggleBg.Parent = TglBtn
             Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
 
-            -- Toggle İç Yuvarlak (Knob)
             local ToggleYuvarlak = Instance.new("Frame")
             ToggleYuvarlak.Size = UDim2.new(0, 18, 0, 18)
             ToggleYuvarlak.Position = UDim2.new(0, 2, 0.5, -9)
@@ -381,16 +386,13 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
                 ToggleAcik = not ToggleAcik
 
                 if ToggleAcik then
-                    -- AÇILIRKEN: Yuvarlak sağa gider, arka plan Mor-Pembe olur
                     TweenService:Create(ToggleYuvarlak, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 0.5, -9)}):Play()
                     TweenService:Create(ToggleBg, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(180, 50, 210)}):Play()
                 else
-                    -- KAPANIRKEN: Yuvarlak sola gider, arka plan Gri olur
                     TweenService:Create(ToggleYuvarlak, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0, 2, 0.5, -9)}):Play()
                     TweenService:Create(ToggleBg, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(120, 120, 120)}):Play()
                 end
 
-                -- Senin koduna Açık(true) veya Kapalı(false) bilgisini gönderir
                 if callback then
                     pcall(callback, ToggleAcik)
                 end
@@ -402,27 +404,3 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
 
     return KategoriSistemi
 end
-
--- ==========================================
--- KULLANIM ÖRNEĞİ
--- ==========================================
-
-local Pencerem = OzelLib:Olustur("Senin Adın", "Blox Fruits", "v1.0")
-local OyuncuSekmesi = Pencerem:KategoriEkle("Oyuncu")
-
--- Yeni Toggle Kullanımı:
-OyuncuSekmesi:ToggleEkle("Otomatik Zıplama (Auto Jump)", function(acikMi)
-    -- Butona her basıldığında bu fonksiyon çalışır
-    if acikMi then
-        print("Otomatik zıplama AÇILDI!")
-        -- Buraya açıldığında çalışacak kodları yazabilirsin
-    else
-        print("Otomatik zıplama KAPATILDI!")
-        -- Buraya kapandığında durdurulacak kodları yazabilirsin
-    end
-end)
-
--- Normal Buton Kullanımı (Eskisi gibi duruyor):
-OyuncuSekmesi:ButonEkle("Normal Buton", function()
-    print("Normal butona tıklandı!")
-end)
