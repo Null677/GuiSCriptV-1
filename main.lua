@@ -1,321 +1,335 @@
--- Bu scripti StarterPlayerScripts içine bir LocalScript olarak ekleyin.
+-- ==========================================
+-- BENZERSİZ GUI KÜTÜPHANESİ (MOR & PEMBE)
+-- ==========================================
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Player = game.Players.LocalPlayer
 
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+-- Eski GUI varsa sil (Test ederken üst üste binmesin)
+if CoreGui:FindFirstChild("OzelGuiLib") then
+    CoreGui.OzelGuiLib:Destroy()
+end
 
-if playerGui:FindFirstChild("KaijuHubGui") then return end
+local OzelLib = {}
+local AktifOzellikler = {} -- Kapatılınca durdurulacak özellikler için
 
--- ==================== VERİLER ====================
-local tabData = {
-    Main = {
-        Title = "✨ Main Features",
-        Items = {
-            "No bat Cool down",
-            "No Grab Cool Down",
-            "+1-2 Sec Cooldown Almost Any Tool",
-            "+Walkspeed",
-            "Anti Ragdoll",
-            "Character Scripts",
-            "Killing Aura",
-            "No Blackout!",
-            "Server Descriptions",
-            "Private Server Commands",
-            "Game Settings GUI",
-            "Instant Transform-style Effect"
-        }
-    },
-    Fishing = {
-        Title = "🎣 Fishing",
-        Items = {"Fishing Rod", "Bait", "Catch Rates", "Fish Types", "Legendary Fish", "Fishing Spots"}
-    },
-    Teleport = {
-        Title = "🌍 Teleport",
-        Items = {"Spawn", "Shop", "Arena", "Island", "Hideout", "Mountain"}
-    },
-    Player = {
-        Title = "👤 Player",
-        Items = {"Stats", "Inventory", "Skills", "Pets", "Badges", "Achievements"}
-    },
-    Settings = {
-        Title = "⚙️ Settings",
-        Items = {"Volume", "Graphics", "Controls", "Accessibility", "Reset Character", "Keybinds"}
+function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "OzelGuiLib"
+    ScreenGui.Parent = CoreGui
+    
+    -- GİRİŞ ANİMASYONU İÇİN NOKTA
+    local Nokta = Instance.new("Frame")
+    Nokta.Size = UDim2.new(0, 15, 0, 15)
+    Nokta.Position = UDim2.new(0.5, -7, -0.1, 0) -- Ekranın üstü
+    Nokta.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Nokta.AnchorPoint = Vector2.new(0.5, 0.5)
+    local NoktaCorner = Instance.new("UICorner")
+    NoktaCorner.CornerRadius = UDim.new(1, 0)
+    NoktaCorner.Parent = Nokta
+    Nokta.Parent = ScreenGui
+    
+    -- ANA PENCERE
+    local AnaPencere = Instance.new("Frame")
+    AnaPencere.Size = UDim2.new(0, 0, 0, 0) -- Animasyon için başlangıç boyutu 0
+    AnaPencere.Position = UDim2.new(0.5, 0, 0.5, 0)
+    AnaPencere.AnchorPoint = Vector2.new(0.5, 0.5)
+    AnaPencere.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    AnaPencere.ClipsDescendants = true
+    AnaPencere.Visible = false
+    AnaPencere.Parent = ScreenGui
+    
+    local AnaCorner = Instance.new("UICorner")
+    AnaCorner.CornerRadius = UDim.new(0, 10)
+    AnaCorner.Parent = AnaPencere
+
+    -- MOR - PEMBE GRADIENT TEMA
+    local TemaGradient = Instance.new("UIGradient")
+    TemaGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(138, 43, 226)), -- Mor
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 105, 180))  -- Pembe
     }
-}
+    TemaGradient.Rotation = 45
+    TemaGradient.Parent = AnaPencere
 
--- ==================== ANA GUI ====================
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "KaijuHubGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
+    -- SOL ÜST BİLGİLER
+    local YapimciText = Instance.new("TextLabel")
+    YapimciText.Size = UDim2.new(0, 200, 0, 20)
+    YapimciText.Position = UDim2.new(0, 10, 0, 5)
+    YapimciText.BackgroundTransparency = 1
+    YapimciText.Text = "Yapımcı: " .. Yapimci
+    YapimciText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    YapimciText.TextXAlignment = Enum.TextXAlignment.Left
+    YapimciText.Font = Enum.Font.GothamBold
+    YapimciText.TextSize = 14
+    YapimciText.Parent = AnaPencere
 
--- ==================== ANA FRAME (Pembemsi arka plan) ====================
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 520, 0, 420)  -- Daha küçük
-mainFrame.Position = UDim2.new(0.5, -260, 0.5, -210)
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 200, 210) -- Pembemsi
-mainFrame.BackgroundTransparency = 0.95 -- Hafif saydam
-mainFrame.BorderSizePixel = 0
-mainFrame.ClipsDescendants = true
-mainFrame.Parent = screenGui
+    local OyunText = Instance.new("TextLabel")
+    OyunText.Size = UDim2.new(0, 200, 0, 15)
+    OyunText.Position = UDim2.new(0, 10, 0, 22)
+    OyunText.BackgroundTransparency = 1
+    OyunText.Text = "Oyun: " .. OyunAdi
+    OyunText.TextColor3 = Color3.fromRGB(220, 220, 220)
+    OyunText.TextXAlignment = Enum.TextXAlignment.Left
+    OyunText.Font = Enum.Font.Gotham
+    OyunText.TextSize = 12
+    OyunText.Parent = AnaPencere
 
--- Gölge efekti (arka plana)
-local shadow = Instance.new("ImageLabel")
-shadow.Name = "Shadow"
-shadow.Size = UDim2.new(1, 20, 1, 20)
-shadow.Position = UDim2.new(0, -10, 0, -10)
-shadow.BackgroundTransparency = 1
-shadow.Image = "rbxassetid://1316049533" -- Roblox gölge efekti
-shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-shadow.ImageTransparency = 0.6
-shadow.ScaleType = Enum.ScaleType.Slice
-shadow.SliceCenter = Rect.new(10, 10, 10, 10)
-shadow.Parent = mainFrame
+    -- SAĞ ALT SÜRÜM BİLGİSİ
+    local SurumText = Instance.new("TextLabel")
+    SurumText.Size = UDim2.new(0, 100, 0, 20)
+    SurumText.Position = UDim2.new(1, -110, 1, -25)
+    SurumText.BackgroundTransparency = 1
+    SurumText.Text = Surum
+    SurumText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SurumText.TextXAlignment = Enum.TextXAlignment.Right
+    SurumText.Font = Enum.Font.GothamBold
+    SurumText.TextSize = 12
+    SurumText.Parent = AnaPencere
 
--- Köşe yuvarlama
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 12)
-corner.Parent = mainFrame
+    -- SAĞ ÜST BUTONLAR (- VE X)
+    local KucultButon = Instance.new("TextButton")
+    KucultButon.Size = UDim2.new(0, 30, 0, 30)
+    KucultButon.Position = UDim2.new(1, -70, 0, 5)
+    KucultButon.BackgroundTransparency = 1
+    KucultButon.Text = "-"
+    KucultButon.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KucultButon.TextSize = 24
+    KucultButon.Font = Enum.Font.GothamBold
+    KucultButon.Parent = AnaPencere
 
--- ==================== BAŞLIK ÇUBUĞU (Sürüklemek için) ====================
-local titleBar = Instance.new("Frame")
-titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, 0, 0, 40)
-titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(255, 150, 170)
-titleBar.BackgroundTransparency = 0.2
-titleBar.BorderSizePixel = 0
-titleBar.Parent = mainFrame
-local titleBarCorner = Instance.new("UICorner")
-titleBarCorner.CornerRadius = UDim.new(0, 12)
-titleBarCorner.Parent = titleBar
+    local KapatButon = Instance.new("TextButton")
+    KapatButon.Size = UDim2.new(0, 30, 0, 30)
+    KapatButon.Position = UDim2.new(1, -35, 0, 5)
+    KapatButon.BackgroundTransparency = 1
+    KapatButon.Text = "X"
+    KapatButon.TextColor3 = Color3.fromRGB(255, 50, 50)
+    KapatButon.TextSize = 18
+    KapatButon.Font = Enum.Font.GothamBold
+    KapatButon.Parent = AnaPencere
 
--- Başlık yazısı
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, -50, 1, 0)
-titleLabel.Position = UDim2.new(0, 15, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "🌸 Kaiju Paradise HUB"
-titleLabel.TextColor3 = Color3.fromRGB(80, 30, 50)
-titleLabel.TextSize = 22
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Parent = titleBar
+    -- SOL KATEGORİ (SEKME) ALANI
+    local KategoriAlani = Instance.new("ScrollingFrame")
+    KategoriAlani.Size = UDim2.new(0, 130, 1, -50)
+    KategoriAlani.Position = UDim2.new(0, 10, 0, 45)
+    KategoriAlani.BackgroundTransparency = 1
+    KategoriAlani.ScrollBarThickness = 2
+    KategoriAlani.Parent = AnaPencere
+    
+    local KategoriLayout = Instance.new("UIListLayout")
+    KategoriLayout.Parent = KategoriAlani
+    KategoriLayout.Padding = UDim.new(0, 5)
 
--- Kapatma butonu (X)
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseBtn"
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -40, 0, 5)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 70, 90)
-closeBtn.BackgroundTransparency = 0.5
-closeBtn.Text = "✕"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 18
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.BorderSizePixel = 0
-closeBtn.Parent = titleBar
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 6)
-closeCorner.Parent = closeBtn
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui.Enabled = false
-end)
+    -- SAĞ İÇERİK ALANI (ÖZELLİKLER BURAYA GELECEK)
+    local IcerikAlani = Instance.new("Frame")
+    IcerikAlani.Size = UDim2.new(1, -160, 1, -80)
+    IcerikAlani.Position = UDim2.new(0, 150, 0, 45)
+    IcerikAlani.BackgroundTransparency = 0.5
+    IcerikAlani.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    IcerikAlani.Parent = AnaPencere
+    local IcerikCorner = Instance.new("UICorner")
+    IcerikCorner.CornerRadius = UDim.new(0, 8)
+    IcerikCorner.Parent = IcerikAlani
 
--- ==================== SÜRÜKLEME (Dragging) ====================
-local dragging = false
-local dragStart, startPos
+    -- ONAY MENÜSÜ (Kapatmaya basınca çıkacak olan)
+    local OnayMenusu = Instance.new("Frame")
+    OnayMenusu.Size = UDim2.new(1, 0, 1, 0)
+    OnayMenusu.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    OnayMenusu.BackgroundTransparency = 0.3
+    OnayMenusu.Visible = false
+    OnayMenusu.ZIndex = 10
+    OnayMenusu.Parent = AnaPencere
 
-titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
+    local SoruText = Instance.new("TextLabel")
+    SoruText.Size = UDim2.new(1, 0, 0, 50)
+    SoruText.Position = UDim2.new(0, 0, 0.4, -25)
+    SoruText.BackgroundTransparency = 1
+    SoruText.Text = "Hileyi kapatmak istediğine emin misin?"
+    SoruText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SoruText.Font = Enum.Font.GothamBold
+    SoruText.TextSize = 18
+    SoruText.ZIndex = 11
+    SoruText.Parent = OnayMenusu
+
+    local OnayKapat = Instance.new("TextButton")
+    OnayKapat.Size = UDim2.new(0, 100, 0, 35)
+    OnayKapat.Position = UDim2.new(0.5, -110, 0.6, 0)
+    OnayKapat.BackgroundColor3 = Color3.fromRGB(200, 40, 40) -- Kırmızı
+    OnayKapat.Text = "Kapat"
+    OnayKapat.TextColor3 = Color3.fromRGB(255,255,255)
+    OnayKapat.Font = Enum.Font.GothamBold
+    OnayKapat.ZIndex = 11
+    Instance.new("UICorner", OnayKapat).CornerRadius = UDim.new(0, 6)
+    OnayKapat.Parent = OnayMenusu
+
+    local OnayGeri = Instance.new("TextButton")
+    OnayGeri.Size = UDim2.new(0, 100, 0, 35)
+    OnayGeri.Position = UDim2.new(0.5, 10, 0.6, 0)
+    OnayGeri.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Gri
+    OnayGeri.Text = "Geri"
+    OnayGeri.TextColor3 = Color3.fromRGB(255,255,255)
+    OnayGeri.Font = Enum.Font.GothamBold
+    OnayGeri.ZIndex = 11
+    Instance.new("UICorner", OnayGeri).CornerRadius = UDim.new(0, 6)
+    OnayGeri.Parent = OnayMenusu
+
+    -- MANTIK VE ANİMASYONLAR
+    local AcikMi = true
+    KucultButon.MouseButton1Click:Connect(function()
+        AcikMi = not AcikMi
+        if AcikMi then
+            TweenService:Create(AnaPencere, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 350)}):Play()
+        else
+            TweenService:Create(AnaPencere, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 500, 0, 40)}):Play()
+        end
+    end)
+
+    KapatButon.MouseButton1Click:Connect(function()
+        OnayMenusu.Visible = true
+    end)
+
+    OnayGeri.MouseButton1Click:Connect(function()
+        OnayMenusu.Visible = false
+    end)
+
+    OnayKapat.MouseButton1Click:Connect(function()
+        -- Tüm aktif özellikleri iptal etme mantığı eklenebilir
+        for _, fonksiyon in pairs(AktifOzellikler) do
+            pcall(fonksiyon) -- Kapatma fonksiyonlarını çalıştırır
+        end
+        ScreenGui:Destroy()
+    end)
+
+    -- AÇILIŞ ANİMASYONU KODLARI (Nokta düşer, patlar, GUI açılır)
+    local DusmeAnim = TweenService:Create(Nokta, TweenInfo.new(0.8, Enum.EasingStyle.Bounce), {Position = UDim2.new(0.5, 0, 0.5, 0)})
+    DusmeAnim:Play()
+    DusmeAnim.Completed:Wait()
+
+    local PatlamaAnim = TweenService:Create(Nokta, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 60, 0, 60), BackgroundTransparency = 1})
+    PatlamaAnim:Play()
+    PatlamaAnim.Completed:Wait()
+    Nokta:Destroy()
+
+    AnaPencere.Visible = true
+    TweenService:Create(AnaPencere, TweenInfo.new(0.6, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {Size = UDim2.new(0, 500, 0, 350)}):Play()
+
+    -- GUI SÜRÜKLEME KODU
+    local surukleniyor, baslangicGiris, baslangicPozisyon
+    AnaPencere.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            surukleniyor = true
+            baslangicGiris = input.Position
+            baslangicPozisyon = AnaPencere.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then surukleniyor = false end
+            end)
+        end
+    end)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if surukleniyor then
+                local delta = input.Position - baslangicGiris
+                AnaPencere.Position = UDim2.new(baslangicPozisyon.X.Scale, baslangicPozisyon.X.Offset + delta.X, baslangicPozisyon.Y.Scale, baslangicPozisyon.Y.Offset + delta.Y)
             end
+        end
+    end)
+
+    -- TAB KONTROLÜ İÇİN DEĞİŞKENLER
+    local IlkTabSecildi = false
+    local Pencereler = {}
+
+    -- KATEGORİ (SEKME) EKLEME FONKSİYONU
+    local KategoriSistemi = {}
+    function KategoriSistemi:KategoriEkle(isim)
+        local TabButon = Instance.new("TextButton")
+        TabButon.Size = UDim2.new(1, 0, 0, 30)
+        TabButon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TabButon.BackgroundTransparency = 0.8
+        TabButon.Text = isim
+        TabButon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabButon.Font = Enum.Font.GothamBold
+        TabButon.Parent = KategoriAlani
+        Instance.new("UICorner", TabButon).CornerRadius = UDim.new(0, 4)
+
+        local TabSayfasi = Instance.new("ScrollingFrame")
+        TabSayfasi.Size = UDim2.new(1, -10, 1, -10)
+        TabSayfasi.Position = UDim2.new(0, 5, 0, 5)
+        TabSayfasi.BackgroundTransparency = 1
+        TabSayfasi.ScrollBarThickness = 2
+        TabSayfasi.Visible = false
+        TabSayfasi.Parent = IcerikAlani
+        table.insert(Pencereler, TabSayfasi)
+
+        local SayfaLayout = Instance.new("UIListLayout")
+        SayfaLayout.Parent = TabSayfasi
+        SayfaLayout.Padding = UDim.new(0, 5)
+
+        if not IlkTabSecildi then
+            TabSayfasi.Visible = true
+            TabButon.BackgroundTransparency = 0.5
+            IlkTabSecildi = true
+        end
+
+        TabButon.MouseButton1Click:Connect(function()
+            for _, pencere in pairs(Pencereler) do pencere.Visible = false end
+            for _, btn in pairs(KategoriAlani:GetChildren()) do 
+                if btn:IsA("TextButton") then btn.BackgroundTransparency = 0.8 end 
+            end
+            TabSayfasi.Visible = true
+            TabButon.BackgroundTransparency = 0.5
         end)
-    end
-end)
 
-userInputService = game:GetService("UserInputService")
-userInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
+        -- ÖZELLİK (BUTON) EKLEME FONKSİYONU
+        local TabOzellikleri = {}
+        function TabOzellikleri:ButonEkle(butonIsmi, callback)
+            local Btn = Instance.new("TextButton")
+            Btn.Size = UDim2.new(1, -5, 0, 35)
+            Btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            Btn.BackgroundTransparency = 0.8
+            Btn.Text = "  " .. butonIsmi
+            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Btn.Font = Enum.Font.GothamSemibold
+            Btn.TextXAlignment = Enum.TextXAlignment.Left
+            Btn.Parent = TabSayfasi
+            Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 4)
 
--- ==================== SOL SIDEBAR ====================
-local sidebar = Instance.new("Frame")
-sidebar.Name = "Sidebar"
-sidebar.Size = UDim2.new(0, 130, 1, -40)
-sidebar.Position = UDim2.new(0, 0, 0, 40)
-sidebar.BackgroundColor3 = Color3.fromRGB(255, 180, 195)
-sidebar.BackgroundTransparency = 0.3
-sidebar.BorderSizePixel = 0
-sidebar.Parent = mainFrame
-
--- ==================== SIDEBAR BUTONLARI (Kalın font) ====================
-local buttonNames = {"Main", "Fishing", "Teleport", "Player", "Settings"}
-local buttons = {}
-
-for i, name in ipairs(buttonNames) do
-    local btn = Instance.new("TextButton")
-    btn.Name = name
-    btn.Size = UDim2.new(0.85, 0, 0, 38)
-    btn.Position = UDim2.new(0.075, 0, 0, 12 + (i-1)*48)
-    btn.BackgroundColor3 = Color3.fromRGB(255, 210, 220)
-    btn.BackgroundTransparency = 0.6
-    btn.BorderSizePixel = 0
-    btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(70, 30, 45)
-    btn.TextSize = 18
-    btn.Font = Enum.Font.GothamBold  -- Kalın font
-    btn.Parent = sidebar
-    
-    local btnCorner = Instance.new("UICorner")
-    btnCorner.CornerRadius = UDim.new(0, 8)
-    btnCorner.Parent = btn
-    
-    btn.MouseEnter:Connect(function()
-        if btn.BackgroundColor3 ~= Color3.fromRGB(255, 120, 150) then
-            btn.BackgroundColor3 = Color3.fromRGB(255, 190, 210)
+            Btn.MouseButton1Click:Connect(function()
+                TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.5}):Play()
+                task.wait(0.1)
+                TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.8}):Play()
+                if callback then pcall(callback) end
+            end)
         end
-    end)
-    btn.MouseLeave:Connect(function()
-        if btn.BackgroundColor3 ~= Color3.fromRGB(255, 120, 150) then
-            btn.BackgroundColor3 = Color3.fromRGB(255, 210, 220)
-        end
-    end)
-    
-    buttons[name] = btn
+
+        return TabOzellikleri
+    end
+
+    return KategoriSistemi
 end
 
--- ==================== SAĞ İÇERİK ALANI ====================
-local contentArea = Instance.new("Frame")
-contentArea.Name = "ContentArea"
-contentArea.Size = UDim2.new(1, -130, 1, -40)
-contentArea.Position = UDim2.new(0, 130, 0, 40)
-contentArea.BackgroundTransparency = 1
-contentArea.Parent = mainFrame
+-- ==========================================
+-- KÜTÜPHANEYİ KULLANMA KISMI (SADECE BURAYI DÜZENLEYECEKSİN)
+-- ==========================================
 
--- Başlık
-local contentTitle = Instance.new("TextLabel")
-contentTitle.Name = "ContentTitle"
-contentTitle.Size = UDim2.new(1, -20, 0, 35)
-contentTitle.Position = UDim2.new(0, 10, 0, 8)
-contentTitle.BackgroundTransparency = 1
-contentTitle.Text = "✨ Main Features"
-contentTitle.TextColor3 = Color3.fromRGB(80, 30, 50)
-contentTitle.TextSize = 26
-contentTitle.Font = Enum.Font.GothamBold
-contentTitle.TextXAlignment = Enum.TextXAlignment.Left
-contentTitle.Parent = contentArea
+-- 1. Arayüzü Başlat
+local Pencerem = OzelLib:Olustur("Senin Adın", "Blox Fruits (veya başka oyun)", "v1.0")
 
--- ScrollingFrame
-local featureList = Instance.new("ScrollingFrame")
-featureList.Name = "FeatureList"
-featureList.Size = UDim2.new(1, -20, 1, -60)
-featureList.Position = UDim2.new(0, 10, 0, 48)
-featureList.BackgroundTransparency = 1
-featureList.BorderSizePixel = 0
-featureList.ScrollBarThickness = 5
-featureList.CanvasSize = UDim2.new(0, 0, 0, 400)
-featureList.Parent = contentArea
+-- 2. Kategorileri (Sekmeleri) Oluştur
+local OyuncuSekmesi = Pencerem:KategoriEkle("Oyuncu")
+local IsinlanmaSekmesi = Pencerem:KategoriEkle("Işınlanma")
 
--- ==================== İÇERİK GÜNCELLEME ====================
-local function updateContent(tabName)
-    local data = tabData[tabName]
-    if not data then return end
-    
-    contentTitle.Text = data.Title
-    
-    for _, child in ipairs(featureList:GetChildren()) do
-        if child:IsA("TextLabel") then child:Destroy() end
-    end
-    
-    local yPos = 5
-    for _, itemText in ipairs(data.Items) do
-        local item = Instance.new("TextLabel")
-        item.Size = UDim2.new(1, -10, 0, 26)
-        item.Position = UDim2.new(0, 5, 0, yPos)
-        item.BackgroundTransparency = 1
-        item.Text = "🌸 " .. itemText
-        item.TextColor3 = Color3.fromRGB(50, 20, 35)
-        item.TextSize = 17
-        item.Font = Enum.Font.SourceSans  -- İçerik metni okunaklı
-        item.TextXAlignment = Enum.TextXAlignment.Left
-        item.TextYAlignment = Enum.TextYAlignment.Top
-        item.Parent = featureList
-        yPos = yPos + 30
-    end
-    
-    featureList.CanvasSize = UDim2.new(0, 0, 0, yPos + 10)
-    
-    -- Buton vurgulama
-    for name, btn in pairs(buttons) do
-        if name == tabName then
-            btn.BackgroundColor3 = Color3.fromRGB(255, 120, 150)
-            btn.BackgroundTransparency = 0.2
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        else
-            btn.BackgroundColor3 = Color3.fromRGB(255, 210, 220)
-            btn.BackgroundTransparency = 0.6
-            btn.TextColor3 = Color3.fromRGB(70, 30, 45)
-        end
-    end
-end
-
--- ==================== BUTON TIKLAMALARI ====================
-for name, btn in pairs(buttons) do
-    btn.MouseButton1Click:Connect(function()
-        updateContent(name)
-    end)
-end
-
--- ==================== AÇILIŞ ANİMASYONU ====================
-mainFrame.Size = UDim2.new(0, 0, 0, 0)
-mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-mainFrame.BackgroundTransparency = 1
-
-game:GetService("TweenService"):Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    Size = UDim2.new(0, 520, 0, 420),
-    Position = UDim2.new(0.5, -260, 0.5, -210),
-    BackgroundTransparency = 0.05
-}):Play()
-
--- ==================== İLK SEKME ====================
-updateContent("Main")
-
--- ==================== AÇ/KAPA (K tuşu) ====================
-local uis = game:GetService("UserInputService")
-uis.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
-        if screenGui.Enabled then
-            -- Kapatma animasyonu
-            game:GetService("TweenService"):Create(mainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                Size = UDim2.new(0, 0, 0, 0),
-                Position = UDim2.new(0.5, 0, 0.5, 0),
-                BackgroundTransparency = 1
-            }):Play()
-            task.wait(0.2)
-            screenGui.Enabled = false
-        else
-            screenGui.Enabled = true
-            -- Açılma animasyonu (tekrar)
-            mainFrame.Size = UDim2.new(0, 0, 0, 0)
-            mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-            mainFrame.BackgroundTransparency = 1
-            game:GetService("TweenService"):Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, 520, 0, 420),
-                Position = UDim2.new(0.5, -260, 0.5, -210),
-                BackgroundTransparency = 0.05
-            }):Play()
-        end
-    end
+-- 3. Kategorilerin İçine Butonları (Özellikleri) Ekle
+OyuncuSekmesi:ButonEkle("Hızlı Koşma (WalkSpeed)", function()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
 end)
 
-print("🌸 Kaiju Paradise HUB (Yenilenmiş) yüklendi! K tuşuyla aç/kapa.")
+OyuncuSekmesi:ButonEkle("Yüksek Zıplama", function()
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 150
+end)
+
+IsinlanmaSekmesi:ButonEkle("Gökyüzüne Işınlan", function()
+    local char = game.Players.LocalPlayer.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame + Vector3.new(0, 500, 0)
+    end
+end)
