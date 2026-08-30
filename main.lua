@@ -1,5 +1,5 @@
 -- ==========================================
--- BENZERSİZ GUI KÜTÜPHANESİ (YAVAŞ ANİMASYONLU & HATASIZ - TUŞU)
+-- BENZERSİZ GUI KÜTÜPHANESİ (TOGGLE, YENİ FONTLAR VE GÖLGELER)
 -- ==========================================
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
@@ -48,26 +48,31 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     TemaGradient.Rotation = 45
     TemaGradient.Parent = AnaPencere
 
+    -- BİLGİ YAZILARI (Yeni Font ve Gölge Ayarlarıyla)
     local YapimciText = Instance.new("TextLabel")
     YapimciText.Size = UDim2.new(0, 200, 0, 20)
     YapimciText.Position = UDim2.new(0, 10, 0, 5)
     YapimciText.BackgroundTransparency = 1
     YapimciText.Text = "Yapımcı: " .. Yapimci
-    YapimciText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    YapimciText.TextColor3 = Color3.fromRGB(50, 10, 80) -- Dark Mor
+    YapimciText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255) -- Beyaz Gölge
+    YapimciText.TextStrokeTransparency = 0
     YapimciText.TextXAlignment = Enum.TextXAlignment.Left
-    YapimciText.Font = Enum.Font.GothamBold
-    YapimciText.TextSize = 14
+    YapimciText.Font = Enum.Font.GothamBlack
+    YapimciText.TextSize = 18
     YapimciText.Parent = AnaPencere
 
     local OyunText = Instance.new("TextLabel")
     OyunText.Size = UDim2.new(0, 200, 0, 15)
-    OyunText.Position = UDim2.new(0, 10, 0, 22)
+    OyunText.Position = UDim2.new(0, 10, 0, 24)
     OyunText.BackgroundTransparency = 1
     OyunText.Text = "Oyun: " .. OyunAdi
-    OyunText.TextColor3 = Color3.fromRGB(220, 220, 220)
+    OyunText.TextColor3 = Color3.fromRGB(50, 10, 80)
+    OyunText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+    OyunText.TextStrokeTransparency = 0
     OyunText.TextXAlignment = Enum.TextXAlignment.Left
-    OyunText.Font = Enum.Font.Gotham
-    OyunText.TextSize = 12
+    OyunText.Font = Enum.Font.GothamBold
+    OyunText.TextSize = 14
     OyunText.Parent = AnaPencere
 
     local SurumText = Instance.new("TextLabel")
@@ -75,10 +80,12 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     SurumText.Position = UDim2.new(1, -110, 1, -25)
     SurumText.BackgroundTransparency = 1
     SurumText.Text = Surum
-    SurumText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SurumText.TextColor3 = Color3.fromRGB(50, 10, 80)
+    SurumText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+    SurumText.TextStrokeTransparency = 0
     SurumText.TextXAlignment = Enum.TextXAlignment.Right
-    SurumText.Font = Enum.Font.GothamBold
-    SurumText.TextSize = 12
+    SurumText.Font = Enum.Font.GothamBlack
+    SurumText.TextSize = 16
     SurumText.Parent = AnaPencere
 
     local KucultButon = Instance.new("TextButton")
@@ -165,7 +172,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     Instance.new("UICorner", OnayGeri).CornerRadius = UDim.new(0, 6)
     OnayGeri.Parent = OnayMenusu
 
-    -- KÜÇÜLTME MANTIĞI (DÜZELTİLEN KISIM)
+    -- KÜÇÜLTME MANTIĞI
     local AcikMi = true
     local AnimasyondaMi = false
 
@@ -175,25 +182,22 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
         AcikMi = not AcikMi
 
         if not AcikMi then
-            -- KAPANIRKEN: İçerikleri hemen gizle, böylece görsel hata oluşmaz
             KategoriAlani.Visible = false
             IcerikAlani.Visible = false
-            SurumText.Visible = false -- Sürüm yazısı da aşağıda kaldığı için gizliyoruz
+            SurumText.Visible = false
             
             local Kapanis = TweenService:Create(AnaPencere, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, 500, 0, 40) -- 40 pixel başlık için en idealidir
+                Size = UDim2.new(0, 500, 0, 40)
             })
             Kapanis:Play()
             Kapanis.Completed:Wait()
         else
-            -- AÇILIRKEN: Önce menü büyüsün
             local Acilis = TweenService:Create(AnaPencere, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, 500, 0, 350)
             })
             Acilis:Play()
             Acilis.Completed:Wait()
             
-            -- Menü tamamen açıldıktan sonra içerikleri tekrar göster
             KategoriAlani.Visible = true
             IcerikAlani.Visible = true
             SurumText.Visible = true
@@ -210,8 +214,8 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     end)
 
     OnayKapat.MouseButton1Click:Connect(function()
-        for _, fonksiyon in pairs(AktifOzellikler) do
-            pcall(fonksiyon)
+        for _, obj in pairs(AktifOzellikler) do
+            if type(obj) == "function" then pcall(obj) end
         end
         ScreenGui:Destroy()
     end)
@@ -264,12 +268,18 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     local KategoriSistemi = {}
     function KategoriSistemi:KategoriEkle(isim)
         local TabButon = Instance.new("TextButton")
-        TabButon.Size = UDim2.new(1, 0, 0, 30)
+        TabButon.Size = UDim2.new(1, 0, 0, 35)
         TabButon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         TabButon.BackgroundTransparency = 0.8
         TabButon.Text = isim
-        TabButon.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TabButon.Font = Enum.Font.GothamBold
+        
+        -- TAB YAZI STİLLERİ
+        TabButon.TextColor3 = Color3.fromRGB(50, 10, 80) -- Dark Mor
+        TabButon.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+        TabButon.TextStrokeTransparency = 0
+        TabButon.Font = Enum.Font.GothamBlack
+        TabButon.TextSize = 16
+        
         TabButon.Parent = KategoriAlani
         Instance.new("UICorner", TabButon).CornerRadius = UDim.new(0, 4)
 
@@ -302,14 +312,22 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
         end)
 
         local TabOzellikleri = {}
+        
+        -- NORMAL TIKLANABİLİR BUTON (YENİLENMİŞ)
         function TabOzellikleri:ButonEkle(butonIsmi, callback)
             local Btn = Instance.new("TextButton")
-            Btn.Size = UDim2.new(1, -5, 0, 35)
+            Btn.Size = UDim2.new(1, -5, 0, 40)
             Btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Btn.BackgroundTransparency = 0.8
             Btn.Text = "  " .. butonIsmi
-            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Btn.Font = Enum.Font.GothamSemibold
+            
+            -- NORMAL BUTON YAZI STİLLERİ
+            Btn.TextColor3 = Color3.fromRGB(50, 10, 80)
+            Btn.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+            Btn.TextStrokeTransparency = 0
+            Btn.Font = Enum.Font.GothamBlack
+            Btn.TextSize = 16
+            
             Btn.TextXAlignment = Enum.TextXAlignment.Left
             Btn.Parent = TabSayfasi
             Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 4)
@@ -319,6 +337,63 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
                 task.wait(0.1)
                 TweenService:Create(Btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.8}):Play()
                 if callback then pcall(callback) end
+            end)
+        end
+
+        -- YENİ EKLENEN TOGGLE (AÇ/KAPAT) SİSTEMİ
+        function TabOzellikleri:ToggleEkle(toggleIsmi, callback)
+            local TglBtn = Instance.new("TextButton")
+            TglBtn.Size = UDim2.new(1, -5, 0, 40)
+            TglBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            TglBtn.BackgroundTransparency = 0.8
+            TglBtn.Text = "  " .. toggleIsmi
+            
+            -- TOGGLE YAZI STİLLERİ
+            TglBtn.TextColor3 = Color3.fromRGB(50, 10, 80)
+            TglBtn.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+            TglBtn.TextStrokeTransparency = 0
+            TglBtn.Font = Enum.Font.GothamBlack
+            TglBtn.TextSize = 16
+            
+            TglBtn.TextXAlignment = Enum.TextXAlignment.Left
+            TglBtn.Parent = TabSayfasi
+            Instance.new("UICorner", TglBtn).CornerRadius = UDim.new(0, 4)
+
+            -- Toggle Dış Kutu (Arka plan)
+            local ToggleBg = Instance.new("Frame")
+            ToggleBg.Size = UDim2.new(0, 44, 0, 22)
+            ToggleBg.Position = UDim2.new(1, -50, 0.5, -11)
+            ToggleBg.BackgroundColor3 = Color3.fromRGB(120, 120, 120) -- Gri (Kapalı State)
+            ToggleBg.Parent = TglBtn
+            Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
+
+            -- Toggle İç Yuvarlak (Knob)
+            local ToggleYuvarlak = Instance.new("Frame")
+            ToggleYuvarlak.Size = UDim2.new(0, 18, 0, 18)
+            ToggleYuvarlak.Position = UDim2.new(0, 2, 0.5, -9)
+            ToggleYuvarlak.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleYuvarlak.Parent = ToggleBg
+            Instance.new("UICorner", ToggleYuvarlak).CornerRadius = UDim.new(1, 0)
+
+            local ToggleAcik = false
+
+            TglBtn.MouseButton1Click:Connect(function()
+                ToggleAcik = not ToggleAcik
+
+                if ToggleAcik then
+                    -- AÇILIRKEN: Yuvarlak sağa gider, arka plan Mor-Pembe olur
+                    TweenService:Create(ToggleYuvarlak, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 0.5, -9)}):Play()
+                    TweenService:Create(ToggleBg, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(180, 50, 210)}):Play()
+                else
+                    -- KAPANIRKEN: Yuvarlak sola gider, arka plan Gri olur
+                    TweenService:Create(ToggleYuvarlak, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0, 2, 0.5, -9)}):Play()
+                    TweenService:Create(ToggleBg, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(120, 120, 120)}):Play()
+                end
+
+                -- Senin koduna Açık(true) veya Kapalı(false) bilgisini gönderir
+                if callback then
+                    pcall(callback, ToggleAcik)
+                end
             end)
         end
 
@@ -333,9 +408,21 @@ end
 -- ==========================================
 
 local Pencerem = OzelLib:Olustur("Senin Adın", "Blox Fruits", "v1.0")
-
 local OyuncuSekmesi = Pencerem:KategoriEkle("Oyuncu")
 
-OyuncuSekmesi:ButonEkle("Hızlı Koşma (WalkSpeed)", function()
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
+-- Yeni Toggle Kullanımı:
+OyuncuSekmesi:ToggleEkle("Otomatik Zıplama (Auto Jump)", function(acikMi)
+    -- Butona her basıldığında bu fonksiyon çalışır
+    if acikMi then
+        print("Otomatik zıplama AÇILDI!")
+        -- Buraya açıldığında çalışacak kodları yazabilirsin
+    else
+        print("Otomatik zıplama KAPATILDI!")
+        -- Buraya kapandığında durdurulacak kodları yazabilirsin
+    end
+end)
+
+-- Normal Buton Kullanımı (Eskisi gibi duruyor):
+OyuncuSekmesi:ButonEkle("Normal Buton", function()
+    print("Normal butona tıklandı!")
 end)
