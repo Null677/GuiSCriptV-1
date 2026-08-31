@@ -52,7 +52,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     YapimciText.Size = UDim2.new(0, 200, 0, 20)
     YapimciText.Position = UDim2.new(0, 10, 0, 5)
     YapimciText.BackgroundTransparency = 1
-    YapimciText.Text = "Yapımcı: " .. Yapimci
+    YapimciText.Text = "Made: " .. Yapimci
     YapimciText.TextColor3 = Color3.fromRGB(50, 10, 80) 
     YapimciText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255) 
     YapimciText.TextStrokeTransparency = 0
@@ -65,7 +65,7 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
     OyunText.Size = UDim2.new(0, 200, 0, 15)
     OyunText.Position = UDim2.new(0, 10, 0, 24)
     OyunText.BackgroundTransparency = 1
-    OyunText.Text = "Oyun: " .. OyunAdi
+    OyunText.Text = "Game: " .. OyunAdi
     OyunText.TextColor3 = Color3.fromRGB(50, 10, 80)
     OyunText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
     OyunText.TextStrokeTransparency = 0
