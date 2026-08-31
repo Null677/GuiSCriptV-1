@@ -2,9 +2,9 @@
 Selam! Kendi GUI kütüphanemi kullanarak yeni bir script yazacağız.
 
 Script Bilgileri:
-* Game: [Oyunun Adını Buraya Yaz]
-* Made: NullLegend
-* Version: [Örn: v1.0]
+* Oyunun Adı: [Oyunun Adını Buraya Yaz]
+* Yapımcı: NullLegend
+* Sürüm: [Örn: v1.0]
 
 Kategoriler ve İstediğim Özellikler:
 1. [Kategori Adı] sekmesi: [Özellik Adı] (Toggle)
