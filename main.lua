@@ -1,19 +1,3 @@
---[[
-Selam! Kendi GUI kütüphanemi kullanarak yeni bir script yazacağız.
-
-Script Bilgileri:
-* Oyunun Adı: [Oyunun Adını Buraya Yaz]
-* Yapımcı: NullLegend
-* Sürüm: [Örn: v1.0]
-
-Kategoriler ve İstediğim Özellikler:
-1. [Kategori Adı] sekmesi: [Özellik Adı] (Toggle)
-2. [Kategori Adı] sekmesi: [Özellik Adı] (Normal Buton)
-(İstediğin kadar ekleyebilirsin...)
-
-⚠️ ÖNEMLİ KURAL: Aşağıdaki "OzelLib" ana GUI kodumda KESİNLİKLE HİÇBİR DEĞİŞİKLİK YAPMA ve ana kodu bana tekrar yazdırma. Sadece kodun en altına eklemem gereken OzelLib:Olustur, KategoriEkle, ButonEkle ve ToggleEkle kodlarını ver. Hilelerin çalışma mantığını da bu butonların içine yaz.
-]]--
-
 -- ==========================================
 -- BENZERSİZ GUI KÜTÜPHANESİ (TOGGLE, YENİ FONTLAR VE GÖLGELER)
 -- ==========================================
@@ -404,3 +388,23 @@ function OzelLib:Olustur(Yapimci, OyunAdi, Surum)
 
     return KategoriSistemi
 end
+
+-- ==========================================
+-- GUI'Yİ ÇALIŞTIRAN VE ÇİZEN KISIM
+-- ==========================================
+local Pencerem = OzelLib:Olustur("NullLegend", "Blox Fruits", "v1.0")
+local OyuncuSekmesi = Pencerem:KategoriEkle("Oyuncu")
+
+-- Örnek Buton
+OyuncuSekmesi:ButonEkle("Hızlı Koşma (WalkSpeed)", function()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50
+end)
+
+-- Örnek Toggle
+OyuncuSekmesi:ToggleEkle("Yüksek Zıplama", function(acikMi)
+    if acikMi then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 120
+    else
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+    end
+end)
